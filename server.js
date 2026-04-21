@@ -16,21 +16,26 @@ app.post('/add-task', async (req, res) => {
       return res.status(400).json({ error: 'Task text is required' });
     }
 
-    const time = new Date().toLocaleTimeString('ru-RU');
-    const taskText = `📝 ${task} — ${time}`;
+    const time = new Date().toLocaleTimeString('ru-RU', {
+      timeZone: 'Asia/Yekaterinburg',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    const taskText = `${task} — ${time}`;
 
     const notionPayload = {
       children: [
         {
           object: 'block',
-          type: 'paragraph',
-          paragraph: {
+          type: 'to_do',
+          to_do: {
             rich_text: [
               {
                 type: 'text',
                 text: { content: taskText }
               }
-            ]
+            ],
+            checked: false
           }
         }
       ]
