@@ -3,8 +3,8 @@ const app = express();
 
 app.use(express.json());
 
-const NOTION_TOKEN = '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';
-const DATABASE_ID = 'bb0418efd4cc47f4af695437c58cc67e';
+const NOTION_TOKEN = process.env.NOTION_TOKEN;
+const DATABASE_ID = process.env.DATABASE_ID;
 
 app.post('/add-task', async (req, res) => {
   try {
