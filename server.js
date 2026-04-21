@@ -35,7 +35,7 @@ app.post('/add-task', async (req, res) => {
     };
 
     const response = await fetch(`https://api.notion.com/v1/blocks/${PAGE_ID}/children`, {
-      method: 'PATCH',
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${NOTION_TOKEN}`,
         'Notion-Version': '2022-06-28',
