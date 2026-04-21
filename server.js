@@ -17,7 +17,7 @@ app.post('/add-task', async (req, res) => {
     }
 
     const time = new Date().toLocaleTimeString('ru-RU', {
-      timeZone: 'Asia/Yekaterinburg',
+      timeZone: 'Europe/Moscow',
       hour: '2-digit',
       minute: '2-digit'
     });
