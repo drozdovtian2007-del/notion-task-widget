@@ -64,5 +64,50 @@ app.post('/add-task', async (req, res) => {
   }
 });
 
+async function cleanupCheckedTasks() {
+  try {
+    const response = await fetch(`https://api.notion.com/v1/blocks/${PAGE_ID}/children?page_size=100`, {
+      headers: {
+        'Authorization': `Bearer ${NOTION_TOKEN}`,
+        'Notion-Version': '2022-06-28'
+      }
+    });
+
+    if (!response.ok) {
+      console.error('Cleanup fetch failed:', await response.text());
+      return;
+    }
+
+    const data = await response.json();
+    const now = Date.now();
+    const ONE_HOUR = 60 * 60 * 1000;
+
+    for (const block of data.results) {
+      if (block.type === 'to_do' && block.to_do.checked) {
+        const editedAt = new Date(block.last_edited_time).getTime();
+        if (now - editedAt > ONE_HOUR) {
+          const del = await fetch(`https://api.notion.com/v1/blocks/${block.id}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${NOTION_TOKEN}`,
+              'Notion-Version': '2022-06-28'
+            }
+          });
+          if (del.ok) {
+            console.log('Deleted checked task:', block.id);
+          } else {
+            console.error('Delete failed:', await del.text());
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Cleanup error:', error);
+  }
+}
+
+setInterval(cleanupCheckedTasks, 15 * 60 * 1000);
+cleanupCheckedTasks();
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
