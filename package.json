@@ -1,0 +1,12 @@
+{
+  "name": "notion-task-widget",
+  "version": "1.0.0",
+  "description": "iOS Shortcut to Notion task adder",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
