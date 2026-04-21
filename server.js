@@ -3,8 +3,10 @@ const app = express();
 
 app.use(express.json());
 
-const NOTION_TOKEN = process.env.NOTION_TOKEN;
-const PAGE_ID = process.env.PAGE_ID;
+const NOTION_TOKEN = (process.env.NOTION_TOKEN || '').trim();
+const PAGE_ID = (process.env.PAGE_ID || '').trim();
+
+console.log('Server starting with PAGE_ID:', PAGE_ID, 'length:', PAGE_ID.length);
 
 app.post('/add-task', async (req, res) => {
   try {
