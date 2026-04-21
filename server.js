@@ -4,7 +4,7 @@ const app = express();
 app.use(express.json());
 
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
-const DATABASE_ID = process.env.DATABASE_ID;
+const PAGE_ID = process.env.PAGE_ID;
 
 app.post('/add-task', async (req, res) => {
   try {
@@ -14,23 +14,28 @@ app.post('/add-task', async (req, res) => {
       return res.status(400).json({ error: 'Task text is required' });
     }
 
-    const today = new Date().toISOString().split('T')[0];
     const time = new Date().toLocaleTimeString('ru-RU');
+    const taskText = `📝 ${task} — ${time}`;
 
     const notionPayload = {
-      parent: { database_id: DATABASE_ID },
-      properties: {
-        "Задача": {
-          title: [{ text: { content: task } }]
-        },
-        "Статус": { checkbox: false },
-        "Дата создания": { date: { start: today } },
-        "Время создания": { rich_text: [{ text: { content: time } }] }
-      }
+      children: [
+        {
+          object: 'block',
+          type: 'paragraph',
+          paragraph: {
+            rich_text: [
+              {
+                type: 'text',
+                text: { content: taskText }
+              }
+            ]
+          }
+        }
+      ]
     };
 
-    const response = await fetch('https://api.notion.com/v1/pages', {
-      method: 'POST',
+    const response = await fetch(`https://api.notion.com/v1/blocks/${PAGE_ID}/children`, {
+      method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${NOTION_TOKEN}`,
         'Notion-Version': '2022-06-28',
