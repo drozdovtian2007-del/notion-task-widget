@@ -47,7 +47,7 @@ app.post('/add-task', async (req, res) => {
     if (!response.ok) {
       const error = await response.text();
       console.error('Notion API error:', error);
-      return res.status(500).json({ error: 'Failed to add task to Notion' });
+      return res.status(500).json({ error: 'Failed to add task to Notion', details: error });
     }
 
     res.json({ success: true, message: 'Задача добавлена ✓' });
